@@ -188,12 +188,14 @@ public class StaticSpatialIndexBolt extends BaseRichBolt {
 			if(sourcesInformations.get(source)==null)
 				sourcesInformations.put(source, new DataSourceInformation());
 			Integer previousEvalauatorTask = sourcesInformations.get(source).getLastBoltTasKInformation().get(objectId);
-			if(previousEvalauatorTask!=evalauatorTask){
+			if(previousEvalauatorTask!=null&&previousEvalauatorTask!=evalauatorTask){
 				sourcesInformations.get(source).getLastBoltTasKInformation().put(objectId, evalauatorTask);
 				collector.emitDirect(previousEvalauatorTask, SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( id, objectXCoord, objectYCoord, objectText, timeStamp) );
 			}
-			else
+			else if(previousEvalauatorTask!=null)
 				collector.emitDirect(previousEvalauatorTask, SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( id, objectXCoord, objectYCoord, objectText, timeStamp) );
+			else
+				collector.emitDirect(evalauatorTask, SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( id, objectXCoord, objectYCoord, objectText, timeStamp) );
 		}
 		else{
 			collector.emitDirect(evalauatorTask, SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( id, objectXCoord, objectYCoord, objectText, timeStamp) );
@@ -222,6 +224,10 @@ public class StaticSpatialIndexBolt extends BaseRichBolt {
 						SpatioTextualConstants.objectYCoordField,
 						SpatioTextualConstants.objectTextField,
 						SpatioTextualConstants.timeStamp));
+		
+		declarer.declareStream(id
+				+ SpatioTextualConstants.Index_Bolt_STreamIDExtension_Control,
+				new Fields(SpatioTextualConstants.control));
 
 	}
 

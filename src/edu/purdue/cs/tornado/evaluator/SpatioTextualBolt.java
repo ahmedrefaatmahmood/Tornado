@@ -56,6 +56,11 @@ public class SpatioTextualBolt extends BaseRichBolt{
 						SpatioTextualConstants.objectTextField,
 						SpatioTextualConstants.timeStamp));
 		declarer.declareStream(id
+				+ SpatioTextualConstants.Bolt_Bolt_STreamIDExtension_Control,
+				new Fields(SpatioTextualConstants.control));
+		
+		
+		declarer.declareStream(id
 				+ SpatioTextualConstants.Bolt_Index_STreamIDExtension_Query,
 				new Fields(SpatioTextualConstants.queryTypeField,
 						SpatioTextualConstants.queryIdField,
@@ -75,6 +80,11 @@ public class SpatioTextualBolt extends BaseRichBolt{
 						SpatioTextualConstants.objectYCoordField,
 						SpatioTextualConstants.objectTextField,
 						SpatioTextualConstants.timeStamp));
+		
+		declarer.declareStream(id
+				+ SpatioTextualConstants.Bolt_Index_STreamIDExtension_Control,
+				new Fields(SpatioTextualConstants.control));
+		
 		//This is the final output 
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Bolt_Output_STreamIDExtension,

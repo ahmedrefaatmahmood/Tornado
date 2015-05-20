@@ -7,10 +7,13 @@ public class SpatioTextualConstants {
 	public static String IndexIDExtension= "_index";
 	public static String Index_Bolt_STreamIDExtension_Query= "_index_bolt_extension_query";
 	public static String Index_Bolt_STreamIDExtension_Data= "_index_bolt_extension_data";
+	public static String Index_Bolt_STreamIDExtension_Control= "_index_bolt_extension_control";
 	public static String Bolt_Index_STreamIDExtension_Query= "_bolt_index_extension_query";
 	public static String Bolt_Index_STreamIDExtension_Data= "_bolt_index_extension_data";
+	public static String Bolt_Index_STreamIDExtension_Control= "_bolt_index_extension_control";
 	public static String Bolt_Bolt_STreamIDExtension_Query= "_bolt_bolt_extension_query";
 	public static String Bolt_Bolt_STreamIDExtension_Data= "_bolt_bolt_extension_data";
+	public static String Bolt_Bolt_STreamIDExtension_Control= "_bolt_bolt_extension_control";
 	public static String Bolt_Output_STreamIDExtension= "_bolt_output_extension";
 	public static String Fields_Grouping_ID_Field= "id";
 	public static String Persistent= "persistent";
@@ -39,6 +42,10 @@ public class SpatioTextualConstants {
 	//Textual content length
 	public static final Integer objectTextualContentLength = 3;
 	public static final Integer queryTextualContentLength = 3;
+	
+	//Control fields 
+	public static final String control = "control";
+	
 	
 	// Object's fields
 	public static final String objectIdField = Fields_Grouping_ID_Field+"_Object";

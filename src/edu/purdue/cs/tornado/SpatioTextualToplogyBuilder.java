@@ -30,14 +30,22 @@ public class SpatioTextualToplogyBuilder extends TopologyBuilder {
 				+ SpatioTextualConstants.Index_Bolt_STreamIDExtension_Query;
 		String indexToBoltStreamId_Data = id
 				+ SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data;
+		String indexToBoltStreamId_Control = id
+				+ SpatioTextualConstants.Index_Bolt_STreamIDExtension_Control;
+		
 		String boltToIndexStreamId_Query = id
 				+ SpatioTextualConstants.Bolt_Index_STreamIDExtension_Query;
 		String boltToIndexStreamId_Data = id
 				+ SpatioTextualConstants.Bolt_Index_STreamIDExtension_Data;
+		String boltToIndexStreamId_Control = id
+				+ SpatioTextualConstants.Bolt_Index_STreamIDExtension_Control;
+		
 		String boltToBoltStreamId_Query = id
 				+ SpatioTextualConstants.Bolt_Bolt_STreamIDExtension_Query;
 		String boltToBoltStreamId_Data = id
 				+ SpatioTextualConstants.Bolt_Bolt_STreamIDExtension_Data;
+		String boltToBoltStreamId_Control = id
+				+ SpatioTextualConstants.Bolt_Bolt_STreamIDExtension_Control;
 		
 		
 		
@@ -48,8 +56,8 @@ public class SpatioTextualToplogyBuilder extends TopologyBuilder {
 		
 		
 		BoltDeclarer indexDeclarer = this.setBolt(indexId,
-				staticSpatialIndexBolt, parallelism_hint).shuffleGrouping(id, boltToIndexStreamId_Query)
-				.shuffleGrouping(id, boltToIndexStreamId_Data);
+				staticSpatialIndexBolt, parallelism_hint).directGrouping(id, boltToIndexStreamId_Query)
+				.directGrouping(id, boltToIndexStreamId_Data).directGrouping(id, boltToIndexStreamId_Control);
 				
 				
 				
@@ -59,8 +67,8 @@ public class SpatioTextualToplogyBuilder extends TopologyBuilder {
 		
 		SpatioTextualIndexGetter spatioTextualIndexGetter = new SpatioTextualIndexGetter(indexDeclarer);
 		this.setBolt(id, spatioTextualBolt, parallelism_hint).directGrouping(
-				indexId, indexToBoltStreamId_Data).directGrouping(indexId, indexToBoltStreamId_Query)
-				.directGrouping(id, boltToBoltStreamId_Query).directGrouping(id, boltToBoltStreamId_Data);
+				indexId, indexToBoltStreamId_Data).directGrouping(indexId, indexToBoltStreamId_Query).directGrouping(indexId, indexToBoltStreamId_Control)
+				.directGrouping(id, boltToBoltStreamId_Query).directGrouping(id, boltToBoltStreamId_Data).directGrouping(id, boltToBoltStreamId_Control);
 				
 		
 		return spatioTextualIndexGetter;
