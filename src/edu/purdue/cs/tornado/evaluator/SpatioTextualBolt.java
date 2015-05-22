@@ -3,6 +3,7 @@ package edu.purdue.cs.tornado.evaluator;
 import java.util.Map;
 
 import edu.purdue.cs.tornado.helper.SpatioTextualConstants;
+import edu.purdue.cs.tornado.messages.DataObjectList;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -15,6 +16,10 @@ import backtype.storm.tuple.Tuple;
  *
  */
 public class SpatioTextualBolt extends BaseRichBolt{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String id;
 	public SpatioTextualBolt(String id){
 		this.id = id;
@@ -23,13 +28,14 @@ public class SpatioTextualBolt extends BaseRichBolt{
 	public void prepare(Map stormConf, TopologyContext context,
 			OutputCollector collector) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("Preparing");
 	}
 
 	@Override
 	public void execute(Tuple input) {
-		// TODO Auto-generated method stub
-		
+		DataObjectList dataObjectList=(DataObjectList) input.getValueByField(SpatioTextualConstants.data);
+		for (int i=0;i<dataObjectList.getDataObjects().size();i++)
+			System.out.println("receieved data item "+dataObjectList.getDataObjects().get(i).getObjectText());
 	}
 
 	@Override
@@ -37,24 +43,10 @@ public class SpatioTextualBolt extends BaseRichBolt{
 		//These are the streams for interaction with other bolts 
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Bolt_Bolt_STreamIDExtension_Query,
-				new Fields(SpatioTextualConstants.queryTypeField,
-						SpatioTextualConstants.queryIdField,
-						SpatioTextualConstants.focalXCoordField,
-						SpatioTextualConstants.focalYCoordField,
-						SpatioTextualConstants.kField,
-						SpatioTextualConstants.queryTextField,
-						SpatioTextualConstants.timeStamp,
-						SpatioTextualConstants.queryXMinField,
-						SpatioTextualConstants.queryYMinField,
-						SpatioTextualConstants.queryXMaxField,
-						SpatioTextualConstants.queryYMaxField));
+				new Fields(SpatioTextualConstants.query));
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Bolt_Bolt_STreamIDExtension_Data,
-				new Fields(SpatioTextualConstants.objectIdField,
-						SpatioTextualConstants.objectXCoordField,
-						SpatioTextualConstants.objectYCoordField,
-						SpatioTextualConstants.objectTextField,
-						SpatioTextualConstants.timeStamp));
+				new Fields(SpatioTextualConstants.data));
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Bolt_Bolt_STreamIDExtension_Control,
 				new Fields(SpatioTextualConstants.control));
@@ -62,24 +54,10 @@ public class SpatioTextualBolt extends BaseRichBolt{
 		
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Bolt_Index_STreamIDExtension_Query,
-				new Fields(SpatioTextualConstants.queryTypeField,
-						SpatioTextualConstants.queryIdField,
-						SpatioTextualConstants.focalXCoordField,
-						SpatioTextualConstants.focalYCoordField,
-						SpatioTextualConstants.kField,
-						SpatioTextualConstants.queryTextField,
-						SpatioTextualConstants.timeStamp,
-						SpatioTextualConstants.queryXMinField,
-						SpatioTextualConstants.queryYMinField,
-						SpatioTextualConstants.queryXMaxField,
-						SpatioTextualConstants.queryYMaxField));
+				new Fields(SpatioTextualConstants.query));
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Bolt_Index_STreamIDExtension_Data,
-				new Fields(SpatioTextualConstants.objectIdField,
-						SpatioTextualConstants.objectXCoordField,
-						SpatioTextualConstants.objectYCoordField,
-						SpatioTextualConstants.objectTextField,
-						SpatioTextualConstants.timeStamp));
+				new Fields(SpatioTextualConstants.data));
 		
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Bolt_Index_STreamIDExtension_Control,
@@ -89,12 +67,7 @@ public class SpatioTextualBolt extends BaseRichBolt{
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Bolt_Output_STreamIDExtension,
 				new Fields(
-						SpatioTextualConstants.queryIdField,
-						SpatioTextualConstants.objectIdField,
-						SpatioTextualConstants.objectXCoordField,
-						SpatioTextualConstants.objectYCoordField,
-						SpatioTextualConstants.objectTextField,
-						SpatioTextualConstants.timeStamp));
+						SpatioTextualConstants.data));
 		
 	}
 

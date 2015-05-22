@@ -45,7 +45,8 @@ public class SpatioTextualConstants {
 	
 	//Control fields 
 	public static final String control = "control";
-	
+	public static final String query = "query";
+	public static final String data = "data";
 	
 	// Object's fields
 	public static final String objectIdField = Fields_Grouping_ID_Field+"_Object";

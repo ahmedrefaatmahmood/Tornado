@@ -14,6 +14,8 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import edu.purdue.cs.tornado.helper.SpatioTextualConstants;
+import edu.purdue.cs.tornado.messages.DataObject;
+import edu.purdue.cs.tornado.messages.DataObjectList;
 
 /**
  * 
@@ -177,28 +179,32 @@ public class StaticSpatialIndexBolt extends BaseRichBolt {
 		//if persistent update the last evaluator bolt information and emit to the previous bolt information 
 		//to invalidate the previous tuple, 
 		//the evaluator bolt should detect this and remove the previous tuple and the send to the proper bolt 
-		Integer objectId = input.getIntegerByField(SpatioTextualConstants.objectIdField) ;
-		Double objectXCoord = input.getDoubleByField(SpatioTextualConstants.objectXCoordField);
-		Double objectYCoord = input.getDoubleByField(SpatioTextualConstants.objectYCoordField);
-		String objectText = input.getStringByField(SpatioTextualConstants.objectTextField);
-		Long timeStamp = input.getLongByField(SpatioTextualConstants.timeStamp);
+		DataObject dataObject = new DataObject();
+		dataObject.setObjectId (input.getIntegerByField(SpatioTextualConstants.objectIdField));
+		dataObject.setObjectXCoord ( input.getDoubleByField(SpatioTextualConstants.objectXCoordField));
+		dataObject.setObjectYCoord ( input.getDoubleByField(SpatioTextualConstants.objectYCoordField));
+		dataObject.setObjectText ( input.getStringByField(SpatioTextualConstants.objectTextField));
+		dataObject.setTimeStamp ( input.getLongByField(SpatioTextualConstants.timeStamp));
 		
-		Integer evalauatorTask = mapDataPointToPartition(objectXCoord, objectYCoord);
+		DataObjectList dataObjectList = new DataObjectList();
+		dataObjectList.addDataObject(dataObject);
+		
+		Integer evalauatorTask = mapDataPointToPartition(dataObject.getObjectXCoord(), dataObject.getObjectYCoord());
 		if(persistent){
 			if(sourcesInformations.get(source)==null)
 				sourcesInformations.put(source, new DataSourceInformation());
-			Integer previousEvalauatorTask = sourcesInformations.get(source).getLastBoltTasKInformation().get(objectId);
+			Integer previousEvalauatorTask = sourcesInformations.get(source).getLastBoltTasKInformation().get(dataObject.getObjectId());
 			if(previousEvalauatorTask!=null&&previousEvalauatorTask!=evalauatorTask){
-				sourcesInformations.get(source).getLastBoltTasKInformation().put(objectId, evalauatorTask);
-				collector.emitDirect(previousEvalauatorTask, SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( id, objectXCoord, objectYCoord, objectText, timeStamp) );
+				sourcesInformations.get(source).getLastBoltTasKInformation().put(dataObject.getObjectId(), evalauatorTask);
+				collector.emitDirect(previousEvalauatorTask, id+SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values(dataObjectList) );
 			}
 			else if(previousEvalauatorTask!=null)
-				collector.emitDirect(previousEvalauatorTask, SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( id, objectXCoord, objectYCoord, objectText, timeStamp) );
+				collector.emitDirect(previousEvalauatorTask, id+SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( dataObjectList) );
 			else
-				collector.emitDirect(evalauatorTask, SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( id, objectXCoord, objectYCoord, objectText, timeStamp) );
+				collector.emitDirect(evalauatorTask, id+SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values(dataObjectList) );
 		}
 		else{
-			collector.emitDirect(evalauatorTask, SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( id, objectXCoord, objectYCoord, objectText, timeStamp) );
+			collector.emitDirect(evalauatorTask, id+SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data, new  Values( dataObjectList) );
 		}
 		
 	}
@@ -206,24 +212,10 @@ public class StaticSpatialIndexBolt extends BaseRichBolt {
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Index_Bolt_STreamIDExtension_Query,
-				new Fields(SpatioTextualConstants.queryTypeField,
-						SpatioTextualConstants.queryIdField,
-						SpatioTextualConstants.focalXCoordField,
-						SpatioTextualConstants.focalYCoordField,
-						SpatioTextualConstants.kField,
-						SpatioTextualConstants.queryTextField,
-						SpatioTextualConstants.timeStamp,
-						SpatioTextualConstants.queryXMinField,
-						SpatioTextualConstants.queryYMinField,
-						SpatioTextualConstants.queryXMaxField,
-						SpatioTextualConstants.queryYMaxField));
+				new Fields(SpatioTextualConstants.query));
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Index_Bolt_STreamIDExtension_Data,
-				new Fields(SpatioTextualConstants.objectIdField,
-						SpatioTextualConstants.objectXCoordField,
-						SpatioTextualConstants.objectYCoordField,
-						SpatioTextualConstants.objectTextField,
-						SpatioTextualConstants.timeStamp));
+				new Fields(SpatioTextualConstants.data));
 		
 		declarer.declareStream(id
 				+ SpatioTextualConstants.Index_Bolt_STreamIDExtension_Control,

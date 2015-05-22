@@ -17,8 +17,10 @@ import edu.purdue.cs.tornado.index.StaticSpatialIndexBolt;
  *
  */
 public class SpatioTextualToplogyBuilder extends TopologyBuilder {
+	
 	private Map<String, IRichBolt> _spatioTexualIndexes = new HashMap<String, IRichBolt>();
 	private Map<String, IRichBolt> _spatioTexualEvaluators = new HashMap<String, IRichBolt>();
+	
 	/**
 	 * This method adds a static spatio-textual index processor to the tornado
 	 */
@@ -85,6 +87,7 @@ public class SpatioTextualToplogyBuilder extends TopologyBuilder {
 		private BoltDeclarer _boltDeclarer;
 		public SpatioTextualIndexGetter(BoltDeclarer boltDeclarer){
 			this._boltDeclarer =boltDeclarer;
+			
 		}
 		/**
 		 * Adding a persistent data input
